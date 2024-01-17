@@ -11,6 +11,7 @@ from aws_cdk import (
     aws_sagemaker as sagemaker,
     aws_ssm as ssm,
     RemovalPolicy,
+    CfnOutput,
 )
 from dataall.modules.mlstudio.db.mlstudio_repositories import SageMakerStudioRepository
 
@@ -203,5 +204,14 @@ class SageMakerDomainExtension(EnvironmentStackExtension):
             'SagemakerStudioDomainId',
             string_value=sagemaker_domain.attr_domain_id,
             parameter_name=f'/{_environment.resourcePrefix}/{_environment.environmentUri}/sagemaker/sagemakerstudio/domain_id',
+        )
+        
+        # print vpc output
+        CfnOutput(
+            setup,
+            f'vpcId-{_environment.environmentUri}',
+            export_name=f'vpcId-{_environment.environmentUri}',
+            value=vpc.vpc_id,
+            description='vpc id created for SageMaker domain',
         )
         return sagemaker_domain
